@@ -13,4 +13,4 @@ The database files will be in `db` directory.
 
 `python main.py`
 
-Optionally, specify `--n 50` or `--n 500` for smaller datasets.
+Optionally, specify `-n 50` or `-n 500` for smaller datasets.

@@ -1,5 +1,3 @@
-# get the database from https://database.lichess.org/#puzzles
-
 import chess
 import random
 from typing import Optional, List, Dict, Tuple
@@ -158,9 +156,47 @@ class StrategyEvaluator:
                     self.print_stats()
         self.print_stats()  # Final stats
 
+import argparse
+import os
+
+# Set base directory
+DB_DIR = "db"
+DB_PREFIX = "lichess_db_puzzle"
+
+def check_db_exists(db_file):
+    """Check if the dataset file exists, otherwise suggest downloading."""
+    if not os.path.exists(db_file):
+        print(f"Error: The dataset file '{db_file}' is missing.")
+        print("Please run `./download_db.sh` to download the required dataset.")
+        exit(1)
+
+def parse_arguments():
+    """Parse command-line arguments."""
+    parser = argparse.ArgumentParser(description="Process Lichess puzzle dataset.")
+    parser.add_argument(
+        "-n", "--num", type=int, choices=[50, 500], 
+        help="Specify the number of puzzles to use (50 or 500). Defaults to full dataset."
+    )
+    return parser.parse_args()
+
 def main():
+    """Main function to determine dataset and process it."""
+    args = parse_arguments()
+
+    # Determine dataset file
+    db_file = DB_PREFIX
+    if args.num == 50 or args.num == 500:
+        db_file += str(args.num)
+    db_file += ".csv"
+    db_file = os.path.join(DB_DIR, db_file)
+
+    # Check if the database file exists
+    check_db_exists(db_file)
+
+    # Set random seed for consistency
     random.seed(42)
-    evaluator = StrategyEvaluator('lichess_db_puzzle_50.csv')
+
+    evaluator = StrategyEvaluator(db_file)
     
     evaluator.add_strategy(RandomStrategy())
     evaluator.add_strategy(MinMaxStrategy("minmax_balance", evaluator=MaterialBalanceEvaluator("balance")))

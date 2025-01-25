@@ -186,7 +186,7 @@ def main():
     # Determine dataset file
     db_file = DB_PREFIX
     if args.num == 50 or args.num == 500:
-        db_file += str(args.num)
+        db_file += "_" + str(args.num)
     db_file += ".csv"
     db_file = os.path.join(DB_DIR, db_file)
 
